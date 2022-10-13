@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -20,6 +19,7 @@ import rezende.israel.isnotev2.extensions.vaiPara
 import rezende.israel.isnotev2.model.Nota
 import rezende.israel.isnotev2.ui.recyclerview.adapter.ListaNotasAdapter
 import rezende.israel.isnotev2.webclient.RetrofitInicializador
+import rezende.israel.isnotev2.webclient.model.NotaResposta
 
 class ListaNotasActivity : AppCompatActivity() {
 
@@ -45,9 +45,13 @@ class ListaNotasActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch(IO) {
-            val call: Call<List<Nota>> = RetrofitInicializador().notaService.buscaTodasNotas()
-            val resposta: Response<List<Nota>> = call.execute()
-            resposta.body()?.let { notas ->
+            val call: Call<List<NotaResposta>> =
+                RetrofitInicializador().notaService.buscaTodasNotas()
+            val resposta: Response<List<NotaResposta>> = call.execute()
+            resposta.body()?.let { notaResposta ->
+                val notas: List<Nota> = notaResposta.map {
+                    it.nota
+                }
                 Log.i("ListaNotas", "onCreate: $notas")
             }
         }

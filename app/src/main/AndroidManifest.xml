@@ -10,7 +10,9 @@
         android:label="isNote"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Ceep">
+        android:theme="@style/Theme.Ceep"
+        android:usesCleartextTraffic="true"
+        >
         <activity
             android:name="rezende.israel.isnotev2.ui.activity.FormNotaActivity"
             android:exported="true" />

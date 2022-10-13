@@ -6,7 +6,8 @@ import rezende.israel.isnotev2.webclient.NotaService.NotaService
 
 class RetrofitInicializador {
 
-    private val retrofit = Retrofit.Builder().baseUrl("http://localhost:8080/").addConverterFactory(MoshiConverterFactory.create()).build()
+    private val retrofit = Retrofit.Builder().baseUrl("http://172.19.52.49:8080/")
+        .addConverterFactory(MoshiConverterFactory.create()).build()
 
     val notaService = retrofit.create(NotaService::class.java)
 
