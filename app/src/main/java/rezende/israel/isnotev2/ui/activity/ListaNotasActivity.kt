@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Response
@@ -42,10 +44,12 @@ class ListaNotasActivity : AppCompatActivity() {
             }
         }
 
-        val call: Call<List<Nota>> = RetrofitInicializador().notaService.buscaTodasNotas()
-        val resposta: Response<List<Nota>> = call.execute()
-        resposta.body()?.let { notas ->
-            Log.i("ListaNotas", "onCreate: $notas")
+        lifecycleScope.launch(IO) {
+            val call: Call<List<Nota>> = RetrofitInicializador().notaService.buscaTodasNotas()
+            val resposta: Response<List<Nota>> = call.execute()
+            resposta.body()?.let { notas ->
+                Log.i("ListaNotas", "onCreate: $notas")
+            }
         }
     }
 
