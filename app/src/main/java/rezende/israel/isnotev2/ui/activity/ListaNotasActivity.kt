@@ -2,6 +2,7 @@ package rezende.israel.isnotev2.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
@@ -9,10 +10,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Response
 import rezende.israel.isnotev2.database.AppDatabase
 import rezende.israel.isnotev2.databinding.ActivityListaNotasBinding
 import rezende.israel.isnotev2.extensions.vaiPara
+import rezende.israel.isnotev2.model.Nota
 import rezende.israel.isnotev2.ui.recyclerview.adapter.ListaNotasAdapter
+import rezende.israel.isnotev2.webclient.RetrofitInicializador
 
 class ListaNotasActivity : AppCompatActivity() {
 
@@ -35,6 +40,12 @@ class ListaNotasActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 buscaNotas()
             }
+        }
+
+        val call: Call<List<Nota>> = RetrofitInicializador().notaService.buscaTodasNotas()
+        val resposta: Response<List<Nota>> = call.execute()
+        resposta.body()?.let { notas ->
+            Log.i("ListaNotas", "onCreate: $notas")
         }
     }
 
