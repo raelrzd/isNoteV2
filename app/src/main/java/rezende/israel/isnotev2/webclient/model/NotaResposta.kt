@@ -15,5 +15,4 @@ class NotaResposta(
             descricao = descricao ?: "",
             imagem = imagem ?: ""
         )
-
 }

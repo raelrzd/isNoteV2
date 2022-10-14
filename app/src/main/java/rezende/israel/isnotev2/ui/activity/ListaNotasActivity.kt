@@ -9,18 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import rezende.israel.isnotev2.database.AppDatabase
 import rezende.israel.isnotev2.databinding.ActivityListaNotasBinding
 import rezende.israel.isnotev2.extensions.vaiPara
-import rezende.israel.isnotev2.model.Nota
 import rezende.israel.isnotev2.ui.recyclerview.adapter.ListaNotasAdapter
-import rezende.israel.isnotev2.webclient.RetrofitInicializador
-import rezende.israel.isnotev2.webclient.model.NotaResposta
+import rezende.israel.isnotev2.webclient.NotaWebClient
 
 class ListaNotasActivity : AppCompatActivity() {
 
@@ -34,18 +28,24 @@ class ListaNotasActivity : AppCompatActivity() {
         AppDatabase.instancia(this).notaDao()
     }
 
+    private val webClientNotas by lazy {
+        NotaWebClient()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         configuraFab()
         configuraRecyclerView()
         lifecycleScope.launch {
+
+            val notas = webClientNotas.buscaTodas()
+            Log.i("ListaNotas", "onCreate: retrofit coroutines $notas")
+
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 buscaNotas()
             }
         }
-
-
     }
 
     private fun retrofitSemCoroutines() {
@@ -84,7 +84,7 @@ class ListaNotasActivity : AppCompatActivity() {
         //                Log.e("ListaNotas", "onFailure: ", t)
         //            }
         //        })
-        
+
     }
 
     private fun configuraFab() {
