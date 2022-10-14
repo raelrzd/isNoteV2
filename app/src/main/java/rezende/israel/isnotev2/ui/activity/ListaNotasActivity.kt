@@ -12,6 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 import rezende.israel.isnotev2.database.AppDatabase
 import rezende.israel.isnotev2.databinding.ActivityListaNotasBinding
@@ -44,17 +45,46 @@ class ListaNotasActivity : AppCompatActivity() {
             }
         }
 
-        lifecycleScope.launch(IO) {
-            val call: Call<List<NotaResposta>> =
-                RetrofitInicializador().notaService.buscaTodasNotas()
-            val resposta: Response<List<NotaResposta>> = call.execute()
-            resposta.body()?.let { notaResposta ->
-                val notas: List<Nota> = notaResposta.map {
-                    it.nota
-                }
-                Log.i("ListaNotas", "onCreate: $notas")
-            }
-        }
+
+    }
+
+    private fun retrofitSemCoroutines() {
+
+        // Criação da CALL para requisição de modo sincrono ou assincrono
+        //        val call: Call<List<NotaResposta>> =
+        //            RetrofitInicializador().notaService.buscaTodasNotas()
+
+
+        // Requisição com call de modo sincrono (execute)
+        //        lifecycleScope.launch(IO) {
+        //            val resposta: Response<List<NotaResposta>> = call.execute()
+        //            resposta.body()?.let { notaResposta ->
+        //                val notas: List<Nota> = notaResposta.map {
+        //                    it.nota
+        //                }
+        //                Log.i("ListaNotas", "onCreate: $notas")
+        //            }
+        //        }
+
+        // Requisição com call de modo assincrono (enqueue)
+        //        call.enqueue(object : Callback<List<NotaResposta>?> {
+        //            override fun onResponse(
+        //                call: Call<List<NotaResposta>?>,
+        //                resposta: Response<List<NotaResposta>?>
+        //            ) {
+        //                resposta.body()?.let { notaResposta ->
+        //                    val notas: List<Nota> = notaResposta.map {
+        //                        it.nota
+        //                    }
+        //                    Log.i("ListaNotas", "onCreate: $notas")
+        //                }
+        //            }
+        //
+        //            override fun onFailure(call: Call<List<NotaResposta>?>, t: Throwable) {
+        //                Log.e("ListaNotas", "onFailure: ", t)
+        //            }
+        //        })
+        
     }
 
     private fun configuraFab() {
