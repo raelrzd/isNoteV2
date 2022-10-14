@@ -13,6 +13,9 @@ interface NotaDao {
     @Insert(onConflict = REPLACE)
     suspend fun salva(note: Nota)
 
+    @Insert
+    suspend fun salva(notas: List<Nota>)
+
     @Query("SELECT * FROM Nota")
     fun buscaTodas(): Flow<List<Nota>>
 
