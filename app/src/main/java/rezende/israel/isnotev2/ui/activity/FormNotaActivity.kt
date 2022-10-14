@@ -17,7 +17,9 @@ import rezende.israel.isnotev2.database.AppDatabase
 import rezende.israel.isnotev2.databinding.ActivityFormNotaBinding
 import rezende.israel.isnotev2.extensions.tentaCarregarImagem
 import rezende.israel.isnotev2.model.Nota
+import rezende.israel.isnotev2.repository.NotaRepository
 import rezende.israel.isnotev2.ui.dialog.FormImagemDialog
+import rezende.israel.isnotev2.webclient.NotaWebClient
 
 class FormNotaActivity : AppCompatActivity() {
 
@@ -25,9 +27,14 @@ class FormNotaActivity : AppCompatActivity() {
         ActivityFormNotaBinding.inflate(layoutInflater)
     }
     private var imagem: MutableStateFlow<String?> = MutableStateFlow(null)
-    private val dao by lazy {
-        AppDatabase.instancia(this).notaDao()
+
+    private val repository by lazy {
+        NotaRepository(
+            AppDatabase.instancia(this).notaDao(),
+            NotaWebClient()
+        )
     }
+
     private var notaId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +51,6 @@ class FormNotaActivity : AppCompatActivity() {
                 configuraCarregamentoDeImagem()
             }
         }
-
     }
 
     private suspend fun configuraCarregamentoDeImagem() {
@@ -62,7 +68,7 @@ class FormNotaActivity : AppCompatActivity() {
 
     private suspend fun tentaBuscarNota() {
         notaId?.let { id ->
-            dao.buscaPorId(id)
+            repository.buscaPorId(id)
                 .filterNotNull()
                 .collect { notaEncontrada ->
                     notaId = notaEncontrada.id
@@ -108,8 +114,7 @@ class FormNotaActivity : AppCompatActivity() {
     private fun remove() {
         lifecycleScope.launch {
             notaId?.let { id ->
-                dao.remove(id)
-
+                repository.remove(id)
             }
             finish()
         }
@@ -118,7 +123,7 @@ class FormNotaActivity : AppCompatActivity() {
     private fun salva() {
         val nota = criaNota()
         lifecycleScope.launch {
-            dao.salva(nota)
+            repository.salva(nota)
             finish()
         }
     }
