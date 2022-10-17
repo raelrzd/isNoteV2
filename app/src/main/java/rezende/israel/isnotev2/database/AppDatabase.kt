@@ -6,10 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import rezende.israel.isnotev2.database.dao.NotaDao
 import rezende.israel.isnotev2.database.migrations.MIGRATION_1_2
+import rezende.israel.isnotev2.database.migrations.MIGRATION_2_3
 import rezende.israel.isnotev2.model.Nota
 
 @Database(
-    version = 2,
+    version = 3,
     entities = [Nota::class],
     exportSchema = true
 )
@@ -26,7 +27,7 @@ abstract class AppDatabase : RoomDatabase() {
                 context,
                 AppDatabase::class.java,
                 "isnote.db"
-            ).addMigrations(MIGRATION_1_2).build()
+            ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
         }
     }
 }
