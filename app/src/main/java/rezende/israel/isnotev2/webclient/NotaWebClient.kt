@@ -23,7 +23,7 @@ class NotaWebClient {
         }
     }
 
-    suspend fun salva(nota: Nota) : Boolean {
+    suspend fun salva(nota: Nota): Boolean {
         try {
             val resposta = notaService.salva(
                 nota.id, NotaRequisicao(
@@ -38,4 +38,16 @@ class NotaWebClient {
         }
         return false
     }
+
+    suspend fun remove(id: String): Boolean {
+        try {
+            val resposta = notaService.remove(id)
+            return resposta.isSuccessful
+        } catch (e: Exception) {
+            Log.e(TAG, "remove: falha ao tentar remover", e)
+        }
+        return false
+    }
+
+
 }
