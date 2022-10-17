@@ -2,6 +2,8 @@ package rezende.israel.isnotev2.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.fold
+import kotlinx.coroutines.flow.forEach
 import rezende.israel.isnotev2.database.dao.NotaDao
 import rezende.israel.isnotev2.model.Nota
 import rezende.israel.isnotev2.webclient.NotaWebClient
@@ -26,8 +28,10 @@ class NotaRepository(private val dao: NotaDao, private val webClient: NotaWebCli
     }
 
     suspend fun remove(id: String) {
-        dao.remove(id)
-        webClient.remove(id)
+        dao.desativa(id)
+        if(webClient.remove(id)){
+            dao.remove(id)
+        }
     }
 
     suspend fun salva(nota: Nota) {
@@ -40,6 +44,10 @@ class NotaRepository(private val dao: NotaDao, private val webClient: NotaWebCli
 
 
     suspend fun sincroniza() {
+        val notasDesativadas = dao.buscaDesativadas().first()
+        notasDesativadas.forEach { notaDesativada ->
+            remove(notaDesativada.id)
+        }
         val notasNaoSincronizadas = dao.buscaNaoSincronizadas().first()
         notasNaoSincronizadas.forEach{ notasNaoSincronizada ->
             salva(notasNaoSincronizada)
