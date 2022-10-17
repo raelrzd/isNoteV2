@@ -40,7 +40,7 @@ class ListaNotasActivity : AppCompatActivity() {
         lifecycleScope.launch {
 
             launch {
-                repository.atualizaTodas()
+                repository.sincroniza()
             }
 
             repeatOnLifecycle(Lifecycle.State.STARTED) {
