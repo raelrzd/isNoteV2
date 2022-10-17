@@ -2,12 +2,14 @@ package rezende.israel.isnotev2.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.launch
 import rezende.israel.isnotev2.database.AppDatabase
 import rezende.israel.isnotev2.databinding.ActivityListaNotasBinding
@@ -16,7 +18,9 @@ import rezende.israel.isnotev2.repository.NotaRepository
 import rezende.israel.isnotev2.ui.recyclerview.adapter.ListaNotasAdapter
 import rezende.israel.isnotev2.webclient.NotaWebClient
 
-class ListaNotasActivity : AppCompatActivity() {
+class ListaNotasActivity : AppCompatActivity(){
+
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private val binding by lazy {
         ActivityListaNotasBinding.inflate(layoutInflater)
@@ -37,6 +41,12 @@ class ListaNotasActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraFab()
         configuraRecyclerView()
+        sincronizaeCarregaNotas()
+        configuraScrollRefresh()
+
+    }
+
+    private fun sincronizaeCarregaNotas() {
         lifecycleScope.launch {
 
             launch {
@@ -46,6 +56,19 @@ class ListaNotasActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 buscaNotas()
             }
+        }
+    }
+
+    private fun configuraScrollRefresh() {
+        swipeRefreshLayout = binding.swipe
+
+        swipeRefreshLayout.setOnRefreshListener {
+            lifecycleScope.launch {
+                repository.sincroniza()
+            }
+            Handler().postDelayed(Runnable {
+                swipeRefreshLayout.isRefreshing = false
+            }, 2000)
         }
     }
 
@@ -118,4 +141,5 @@ class ListaNotasActivity : AppCompatActivity() {
         //            }
         //        })
     }
+
 }
